@@ -1,0 +1,598 @@
+{
+	"id": "3ac284e2-bba5-4a63-9a0b-d4b9a828d428",
+	"name": "DemoShopping",
+	"timestamp": "2025-05-26T13:12:26.563Z",
+	"collection_id": "41782591-3015432c-3798-453d-a058-3cef83612c96",
+	"folder_id": 0,
+	"environment_id": "41782591-e7abac6f-7c12-472e-839d-6824230e6bc9",
+	"totalPass": 17,
+	"delay": 0,
+	"persist": true,
+	"status": "error",
+	"startedAt": "2025-05-26T13:12:21.115Z",
+	"totalFail": 2,
+	"results": [
+		{
+			"id": "7d3d4e53-dab4-4e2b-a33a-bd1fc56c538a",
+			"name": "200 List of products",
+			"url": "https://qa.demoshopping.ru/products",
+			"time": 503,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Varify that status code is 200": true,
+				"Verify that each product has all required fields with non-empty values": false,
+				"Verify that response time is less than 500ms": false
+			},
+			"testPassFailCounts": {
+				"Varify that status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that each product has all required fields with non-empty values": {
+					"pass": 0,
+					"fail": 1
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 0,
+					"fail": 1
+				}
+			},
+			"times": [
+				503
+			],
+			"allTests": [
+				{
+					"Varify that status code is 200": true,
+					"Verify that each product has all required fields with non-empty values": false,
+					"Verify that response time is less than 500ms": false
+				}
+			]
+		},
+		{
+			"id": "e9919372-5f5b-4440-af0d-0fa8a2eaceeb",
+			"name": "200 Add new product",
+			"url": "https://qa.demoshopping.ru/add-product",
+			"time": 148,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Varify that status code is 200": true,
+				"Verify that response time is less than 500ms": true,
+				"Verify that the var environment level 'productID' is set": true
+			},
+			"testPassFailCounts": {
+				"Varify that status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that the var environment level 'productID' is set": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				148
+			],
+			"allTests": [
+				{
+					"Varify that status code is 200": true,
+					"Verify that response time is less than 500ms": true,
+					"Verify that the var environment level 'productID' is set": true
+				}
+			]
+		},
+		{
+			"id": "555b6fd1-de0f-431b-9457-0c9211cabbb9",
+			"name": "400 Add a new product with incorrect price",
+			"url": "https://qa.demoshopping.ru/add-product",
+			"time": 124,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {
+				"Varify that status code is 400": true,
+				"Verify that response time is less than 500ms": true,
+				"Verify that the server returns an error on the string value 'price'": true
+			},
+			"testPassFailCounts": {
+				"Varify that status code is 400": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that the server returns an error on the string value 'price'": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				124
+			],
+			"allTests": [
+				{
+					"Varify that status code is 400": true,
+					"Verify that response time is less than 500ms": true,
+					"Verify that the server returns an error on the string value 'price'": true
+				}
+			]
+		},
+		{
+			"id": "fce8d7d2-ccbc-48c3-89ff-095f8478c18b",
+			"name": "200 Product search by ID",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 112,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Verify that each product has all required fields with non-empty values": true,
+				"Verify that ID from environment variable is used in URL": true,
+				"Varify that status code is 200": true,
+				"Verify that response time is less than 500ms": true
+			},
+			"testPassFailCounts": {
+				"Verify that each product has all required fields with non-empty values": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that ID from environment variable is used in URL": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Varify that status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				112
+			],
+			"allTests": [
+				{
+					"Verify that each product has all required fields with non-empty values": true,
+					"Verify that ID from environment variable is used in URL": true,
+					"Varify that status code is 200": true,
+					"Verify that response time is less than 500ms": true
+				}
+			]
+		},
+		{
+			"id": "6a5621b0-5edc-4881-831b-7ba9d0de898b",
+			"name": "404 Product search by non-existent ID",
+			"url": "https://qa.demoshopping.ru/products/id/200716",
+			"time": 114,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {
+				"Verify that the server doesn't return the product by non-existent ID": true,
+				"Varify that status code is 404": true,
+				"Verify that response time is less than 500ms": true
+			},
+			"testPassFailCounts": {
+				"Verify that the server doesn't return the product by non-existent ID": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Varify that status code is 404": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				114
+			],
+			"allTests": [
+				{
+					"Verify that the server doesn't return the product by non-existent ID": true,
+					"Varify that status code is 404": true,
+					"Verify that response time is less than 500ms": true
+				}
+			]
+		},
+		{
+			"id": "f44b579d-2e06-404c-bfb1-e2063a601ab9",
+			"name": "200 Full update product info",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 132,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {
+				"Verify that product ID  from environment variable is used in URL": true,
+				"Varify that status code is 200": true,
+				"Verify that response time is less than 500ms": true
+			},
+			"testPassFailCounts": {
+				"Verify that product ID  from environment variable is used in URL": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Varify that status code is 200": {
+					"pass": 1,
+					"fail": 0
+				},
+				"Verify that response time is less than 500ms": {
+					"pass": 1,
+					"fail": 0
+				}
+			},
+			"times": [
+				132
+			],
+			"allTests": [
+				{
+					"Verify that product ID  from environment variable is used in URL": true,
+					"Varify that status code is 200": true,
+					"Verify that response time is less than 500ms": true
+				}
+			]
+		},
+		{
+			"id": "a890c750-a543-4f6d-a089-27a12f1cc5c3",
+			"name": "400 Full update product info with incorrect price",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 111,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				111
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "8b8d48cd-d1f1-46d7-94e2-99c2a501b845",
+			"name": "404 Full update product info with non-existent ID",
+			"url": "https://qa.demoshopping.ru/products/id/200716",
+			"time": 115,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				115
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "e4f431e0-5846-4649-8b02-b4b446b1e6c8",
+			"name": "200 Part update product info",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 137,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				137
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "bf9377ef-3824-4aac-b481-e7bab7f97511",
+			"name": "400 Part update product info with incorrect data",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 126,
+			"responseCode": {
+				"code": 400,
+				"name": "Bad Request"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				126
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "96f70b34-d3f6-4425-bb3c-bf8d7cd869ca",
+			"name": "404 Part update product info with non-existent ID",
+			"url": "https://qa.demoshopping.ru/products/id/200716",
+			"time": 114,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				114
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "7a1a14d6-69fe-4163-a183-6a473855f78e",
+			"name": "200 Product search by category",
+			"url": "https://qa.demoshopping.ru/products/FindByCategory?category=Laptops",
+			"time": 115,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				115
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "db292941-7d89-44a4-b2d4-c66c02e69cb4",
+			"name": "404 Product search by non-existent category",
+			"url": "https://qa.demoshopping.ru/products/FindByCategory?category=TV",
+			"time": 120,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				120
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "7f9500bd-81aa-430b-a5f5-6ecd5bf1eca1",
+			"name": "200 Product search by brand",
+			"url": "https://qa.demoshopping.ru/products/FindByManufacturer?manufacturer=Samsung",
+			"time": 117,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				117
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "6c131764-2050-4067-8f03-ea86f2effe9b",
+			"name": "404 Product search by non-existent brand",
+			"url": "https://qa.demoshopping.ru/products/FindByManufacturer?manufacturer=Sony",
+			"time": 112,
+			"responseCode": {
+				"code": 404,
+				"name": "Not Found"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				112
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "5c98a21d-4ebe-4971-9fb8-b264a17e9faa",
+			"name": "200 Product search by free shipping",
+			"url": "https://qa.demoshopping.ru/products/FindByShipping?freeShipping=true",
+			"time": 170,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				170
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "b7007bf9-8196-41d8-9b23-a4931f6cb407",
+			"name": "200 Product sort and filter",
+			"url": "https://qa.demoshopping.ru/products/filter?category=Laptops&manufacturer=Samsung&freeShipping=true&minPrice=100&maxPrice=2000",
+			"time": 117,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				117
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "92e87c6b-9b25-493f-9305-9703674c01a8",
+			"name": "200 Product sort and filter",
+			"url": "https://qa.demoshopping.ru/products/filter?category=Phones&manufacturer=Samsung&freeShipping=true&minPrice=100&maxPrice=2000",
+			"time": 114,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				114
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "ce105e32-d2e5-4b53-9b23-9ec7bac357ce",
+			"name": "400 Product sort and filter",
+			"url": "https://qa.demoshopping.ru/products/filter?category=Laptops&manufacturer=Sony&freeShipping=true&minPrice=100&maxPrice=2000",
+			"time": 117,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				117
+			],
+			"allTests": [
+				{}
+			]
+		},
+		{
+			"id": "acd81c80-375d-47b4-9293-612542579565",
+			"name": "200 Delete a product",
+			"url": "https://qa.demoshopping.ru/products/id/20876",
+			"time": 125,
+			"responseCode": {
+				"code": 200,
+				"name": "OK"
+			},
+			"tests": {},
+			"testPassFailCounts": {},
+			"times": [
+				125
+			],
+			"allTests": [
+				{}
+			]
+		}
+	],
+	"count": 1,
+	"totalTime": 2843,
+	"collection": {
+		"requests": [
+			{
+				"id": "7d3d4e53-dab4-4e2b-a33a-bd1fc56c538a",
+				"method": "GET"
+			},
+			{
+				"id": "e9919372-5f5b-4440-af0d-0fa8a2eaceeb",
+				"method": "POST"
+			},
+			{
+				"id": "555b6fd1-de0f-431b-9457-0c9211cabbb9",
+				"method": "POST"
+			},
+			{
+				"id": "fce8d7d2-ccbc-48c3-89ff-095f8478c18b",
+				"method": "GET"
+			},
+			{
+				"id": "6a5621b0-5edc-4881-831b-7ba9d0de898b",
+				"method": "GET"
+			},
+			{
+				"id": "f44b579d-2e06-404c-bfb1-e2063a601ab9",
+				"method": "PUT"
+			},
+			{
+				"id": "a890c750-a543-4f6d-a089-27a12f1cc5c3",
+				"method": "PUT"
+			},
+			{
+				"id": "8b8d48cd-d1f1-46d7-94e2-99c2a501b845",
+				"method": "PUT"
+			},
+			{
+				"id": "e4f431e0-5846-4649-8b02-b4b446b1e6c8",
+				"method": "PATCH"
+			},
+			{
+				"id": "bf9377ef-3824-4aac-b481-e7bab7f97511",
+				"method": "PATCH"
+			},
+			{
+				"id": "96f70b34-d3f6-4425-bb3c-bf8d7cd869ca",
+				"method": "PATCH"
+			},
+			{
+				"id": "7a1a14d6-69fe-4163-a183-6a473855f78e",
+				"method": "GET"
+			},
+			{
+				"id": "db292941-7d89-44a4-b2d4-c66c02e69cb4",
+				"method": "GET"
+			},
+			{
+				"id": "7f9500bd-81aa-430b-a5f5-6ecd5bf1eca1",
+				"method": "GET"
+			},
+			{
+				"id": "6c131764-2050-4067-8f03-ea86f2effe9b",
+				"method": "GET"
+			},
+			{
+				"id": "5c98a21d-4ebe-4971-9fb8-b264a17e9faa",
+				"method": "GET"
+			},
+			{
+				"id": "b7007bf9-8196-41d8-9b23-a4931f6cb407",
+				"method": "GET"
+			},
+			{
+				"id": "92e87c6b-9b25-493f-9305-9703674c01a8",
+				"method": "GET"
+			},
+			{
+				"id": "ce105e32-d2e5-4b53-9b23-9ec7bac357ce",
+				"method": "GET"
+			},
+			{
+				"id": "acd81c80-375d-47b4-9293-612542579565",
+				"method": "DELETE"
+			},
+			{
+				"id": "bb68b35b-fe08-4107-bff5-c48436085164",
+				"method": "POST"
+			}
+		]
+	}
+}
