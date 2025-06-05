@@ -13,7 +13,7 @@
 
 [Ссылка на публичную коллекцию в Postman](https://www.postman.com/descent-module-geologist-7640643/workspace/study/collection/41782591-30012ee2-c6d4-477e-a0f3-4e414d1d5896?action=share&creator=41782591&active-environment=41782591-e7abac6f-7c12-472e-839d-6824230e6bc9)
 
-Добавление генерации данных и тест-кейсов в коллекцию
+Добавление генерации данных и тест-кейсов в коллекцию:
 
 Генерация тестовых данных для коллекции запросов
 
