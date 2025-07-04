@@ -1,0 +1,74 @@
+Set a variable at the collection level:
+
+// Get the response body
+const responseBody = pm.response.text();
+
+// Looking for the number after "ID:"
+const idMatch = responseBody.match(/ID:\s*(\d+)/);
+
+if (idMatch && idMatch[1]) {
+    const productId = idMatch[1];
+
+    // Set a variable at the collection level
+    pm.environment.set("productID", productId);
+
+    console.log("productID сохранён:", productId);
+} else {
+    console.warn("ID не найден в ответе");
+};
+
+Varify that status code is 200:
+
+pm.test("Varify that status code is 200", function () {
+    pm.response.to.have.status(200);
+});
+
+Verify that response time is less than 500ms:
+
+pm.test("Verify that response time is less than 500ms", function () {
+    pm.expect(pm.response.responseTime).to.be.below(500);
+});
+
+Verify that the var environment level 'productID' is set:
+
+pm.test("Verify that the var environment level 'productID' is set", function () {
+    let value = pm.environment.get("productID");
+    pm.expect(value, "Переменная 'productID' отсутствует или пуста").to.exist;
+    pm.expect(value.toString().trim().length, "Значение переменной 'productID' пустое").to.be.above(0);
+});
+
+Verify that each product has all required fields with non-empty values:
+
+pm.test("Verify that each product has all required fields with non-empty values", function () {
+    let products = pm.response.json();
+
+    const requiredFields = [
+        "product_id",
+        "name",
+        "description",
+        "price",
+        "category",
+        "manufacturer",
+        "imageUrl",
+        "freeShipping"
+    ];
+    products.forEach((product, index) => {
+        requiredFields.forEach(field => {
+            pm.expect(product, `Товар №${index + 1} не содержит поле "${field}"`).to.have.property(field);
+
+            const value = product[field];
+
+            // Check for empty or invalid type
+            if (typeof value === "string") {
+                pm.expect(value.trim().length, `Пустая строка в поле "${field}" у товара №${index + 1}`).to.be.above(0);
+            } else if (typeof value === "number") {
+                pm.expect(value, `Поле "${field}" у товара №${index + 1} не должно быть NaN`).to.not.be.NaN;
+            } else if (typeof value === "boolean") {
+                pm.expect(typeof value, `Поле "${field}" у товара №${index + 1} должно быть boolean`).to.eql("boolean");
+            } else {
+                pm.expect(value, `Поле "${field}" у товара №${index + 1} не должно быть null или undefined`).to.not.be.null;
+                pm.expect(value, `Поле "${field}" у товара №${index + 1} не должно быть null или undefined`).to.not.be.undefined;
+            }
+        });
+    });
+});

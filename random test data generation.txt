@@ -1,0 +1,24 @@
+Body request:
+{
+  "name": "{{$randomProductName}}",
+  "description": "{{description}}",
+  "price": {{$randomPrice}},
+  "category": "{{category}}",
+  "manufacturer": "{{manufacturer}}",
+  "imageUrl": "{{$randomImageUrl}}",
+  "freeShipping": {{$randomBoolean}}
+}
+
+Pre-request: 
+
+// Random Description Generation
+pm.variables.set("description", "Description_" + Math.random().toString(36).substring(7));
+
+// Select random category
+let categories = ["Phones", "Laptops", "Whatches", "Electronics"];
+pm.variables.set("category", categories[Math.floor(Math.random() * categories.length)]);
+
+// Select random manufacturer
+let manufacturers = ["Samsung", "Apple", "Sony", "Huawei", "Xiaomi"];
+pm.variables.set("manufacturer", manufacturers[Math.floor(Math.random() * manufacturers.length)]);
+
