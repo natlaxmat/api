@@ -1,0 +1,2424 @@
+{
+	"info": {
+		"_postman_id": "3015432c-3798-453d-a058-3cef83612c96",
+		"name": "DemoShopping",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41782591",
+		"_collection_link": "https://www.postman.com/descent-module-geologist-7640643/workspace/study/collection/41782591-3015432c-3798-453d-a058-3cef83612c96?action=share&source=collection_link&creator=41782591"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "200 List of products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Varify that status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that each product has all required fields with non-empty values\", function () {\r",
+									"    let products = pm.response.json();\r",
+									"\r",
+									"    const requiredFields = [\r",
+									"        \"product_id\",\r",
+									"        \"name\",\r",
+									"        \"description\",\r",
+									"        \"price\",\r",
+									"        \"category\",\r",
+									"        \"manufacturer\",\r",
+									"        \"imageUrl\",\r",
+									"        \"freeShipping\"\r",
+									"    ];\r",
+									"    products.forEach((product, index) => {\r",
+									"        requiredFields.forEach(field => {\r",
+									"            pm.expect(product, `Товар №${index + 1} не содержит поле \"${field}\"`).to.have.property(field);\r",
+									"\r",
+									"            const value = product[field];\r",
+									"\r",
+									"            // Проверка на пустоту или некорректный тип\r",
+									"            if (typeof value === \"string\") {\r",
+									"                pm.expect(value.trim().length, `Пустая строка в поле \"${field}\" у товара №${index + 1}`).to.be.above(0);\r",
+									"            } else if (typeof value === \"number\") {\r",
+									"                pm.expect(value, `Поле \"${field}\" у товара №${index + 1} не должно быть NaN`).to.not.be.NaN;\r",
+									"            } else if (typeof value === \"boolean\") {\r",
+									"                pm.expect(typeof value, `Поле \"${field}\" у товара №${index + 1} должно быть boolean`).to.eql(\"boolean\");\r",
+									"            } else {\r",
+									"                pm.expect(value, `Поле \"${field}\" у товара №${index + 1} не должно быть null или undefined`).to.not.be.null;\r",
+									"                pm.expect(value, `Поле \"${field}\" у товара №${index + 1} не должно быть null или undefined`).to.not.be.undefined;\r",
+									"            }\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Add new product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем тело ответа\r",
+									"const responseBody = pm.response.text();\r",
+									"\r",
+									"// Ищем число после \"ID:\"\r",
+									"const idMatch = responseBody.match(/ID:\\s*(\\d+)/);\r",
+									"\r",
+									"if (idMatch && idMatch[1]) {\r",
+									"    const productId = idMatch[1];\r",
+									"\r",
+									"    // Устанавливаем переменную на уровне коллекции\r",
+									"    pm.environment.set(\"productID\", productId);\r",
+									"\r",
+									"    console.log(\"productID сохранён:\", productId);\r",
+									"} else {\r",
+									"    console.warn(\"ID не найден в ответе\");\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Varify that status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that the var environment level 'productID' is set\", function () {\r",
+									"    let value = pm.environment.get(\"productID\");\r",
+									"    pm.expect(value, \"Переменная 'productID' отсутствует или пуста\").to.exist;\r",
+									"    pm.expect(value.toString().trim().length, \"Значение переменной 'productID' пустое\").to.be.above(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерация случайного описания\r",
+									"pm.variables.set(\"description\", \"Description_\" + Math.random().toString(36).substring(7));\r",
+									"\r",
+									"// Выбор случайной категории\r",
+									"let categories = [\"Phones\", \"Laptops\", \"Whatches\", \"Electronics\"];\r",
+									"pm.variables.set(\"category\", categories[Math.floor(Math.random() * categories.length)]);\r",
+									"\r",
+									"// Выбор случайного производителя\r",
+									"let manufacturers = [\"Samsung\", \"Apple\", \"Sony\", \"Huawei\", \"Xiaomi\"];\r",
+									"pm.variables.set(\"manufacturer\", manufacturers[Math.floor(Math.random() * manufacturers.length)]);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"category\": \"{{category}}\",\r\n  \"manufacturer\": \"{{manufacturer}}\",\r\n  \"imageUrl\": \"{{$randomImageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/add-product",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"add-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Add a new product with incorrect price",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Varify that status code is 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that the server returns an error on the string value 'price'\", function () {\r",
+									"    const responseText = pm.response.text();\r",
+									"\r",
+									"    // Проверим, что статус ответа — 400 или 422 (или другой ожидаемый при ошибке валидации)\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([400, 422]);\r",
+									"\r",
+									"    // Проверим, что в сообщении есть нужный текст\r",
+									"    pm.expect(responseText.toLowerCase()).to.include(\"неправильный тип значения\");\r",
+									"    pm.expect(responseText.toLowerCase()).to.include(\"price\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерация случайного описания\r",
+									"pm.variables.set(\"description\", \"Description_\" + Math.random().toString(36).substring(7));\r",
+									"\r",
+									"// Выбор случайной категории\r",
+									"let categories = [\"Phones\", \"Laptops\", \"Whatches\", \"Electronics\"];\r",
+									"pm.variables.set(\"category\", categories[Math.floor(Math.random() * categories.length)]);\r",
+									"\r",
+									"// Выбор случайного производителя\r",
+									"let manufacturers = [\"Samsung\", \"Apple\", \"Sony\", \"Huawei\", \"Xiaomi\"];\r",
+									"pm.variables.set(\"manufacturer\", manufacturers[Math.floor(Math.random() * manufacturers.length)]);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"price\": one million,\r\n  \"category\": \"{{category}}\",\r\n  \"manufacturer\": \"{{manufacturer}}\",\r\n  \"imageUrl\": \"{{$randomImageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/add-product",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"add-product"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product search by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that each product has all required fields with non-empty values\", function () {\r",
+									"    let product = pm.response.json(); // Changed 'products' to 'product'\r",
+									"\r",
+									"    const requiredFields = [\r",
+									"        \"product_id\",\r",
+									"        \"name\",\r",
+									"        \"description\",\r",
+									"        \"price\",\r",
+									"        \"category\",\r",
+									"        \"manufacturer\",\r",
+									"        \"imageUrl\",\r",
+									"        \"freeShipping\"\r",
+									"    ];\r",
+									"    requiredFields.forEach(field => { // Removed the unnecessary forEach loop\r",
+									"        pm.expect(product, `Товар не содержит поле \"${field}\"`).to.have.property(field);\r",
+									"\r",
+									"        const value = product[field];\r",
+									"\r",
+									"        // Validation logic remains unchanged\r",
+									"        if (typeof value === \"string\") {\r",
+									"            pm.expect(value.trim().length, `Пустая строка в поле \"${field}\"`).to.be.above(0);\r",
+									"        } else if (typeof value === \"number\") {\r",
+									"            pm.expect(value, `Поле \"${field}\" не должно быть NaN`).to.not.be.NaN;\r",
+									"        } else if (typeof value === \"boolean\") {\r",
+									"            pm.expect(typeof value, `Поле \"${field}\" должно быть boolean`).to.eql(\"boolean\");\r",
+									"        } else {\r",
+									"            pm.expect(value, `Поле \"${field}\" не должно быть null или undefined`).to.not.be.null;\r",
+									"            pm.expect(value, `Поле \"${field}\" не должно быть null или undefined`).to.not.be.undefined;\r",
+									"        }\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that ID from environment variable is used in URL\", function () {\r",
+									"    const requestUrl = pm.request.url.toString();\r",
+									"    const expectedID = pm.environment.get(\"productID\");\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Varify that status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Product search by non-existent ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that the server doesn't return the product by non-existent ID\", function () {\r",
+									"    const status = pm.response.code;\r",
+									"    const body = pm.response.text();\r",
+									"\r",
+									"    // Ожидаем статус ошибки 404 или 204\r",
+									"    pm.expect(status).to.be.oneOf([404, 204]);\r",
+									"\r",
+									"    // Убеждаемся, что ответ не содержит данные товара\r",
+									"    pm.expect(body).to.not.include(\"name\");\r",
+									"    pm.expect(body).to.not.include(\"description\");\r",
+									"\r",
+									"    // Дополнительно — ожидаем конкретное сообщение об ошибке\r",
+									"    pm.expect(body.toLowerCase()).to.include(\"не найден\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Varify that status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/id/200716",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"200716"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Full update product info",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Verify that product ID  from environment variable is used in URL\", function () {\r",
+									"    const requestUrl = pm.request.url.toString();\r",
+									"    const expectedID = pm.environment.get(\"productID\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Varify that status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify that response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерация случайного описания\r",
+									"pm.variables.set(\"description\", \"Description_\" + Math.random().toString(36).substring(7));\r",
+									"\r",
+									"// Выбор случайной категории\r",
+									"let categories = [\"Phones\", \"Laptops\", \"Whatches\", \"Electronics\"];\r",
+									"pm.variables.set(\"category\", categories[Math.floor(Math.random() * categories.length)]);\r",
+									"\r",
+									"// Выбор случайного производителя\r",
+									"let manufacturers = [\"Samsung\", \"Apple\", \"Sony\", \"Huawei\", \"Xiaomi\"];\r",
+									"pm.variables.set(\"manufacturer\", manufacturers[Math.floor(Math.random() * manufacturers.length)]);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"category\": \"{{category}}\",\r\n  \"manufacturer\": \"{{manufacturer}}\",\r\n  \"imageUrl\": \"{{imageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Full update product info with incorrect price",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерация случайного описания\r",
+									"pm.variables.set(\"description\", \"Description_\" + Math.random().toString(36).substring(7));\r",
+									"\r",
+									"// Выбор случайной категории\r",
+									"let categories = [\"Phones\", \"Laptops\", \"Whatches\", \"Electronics\"];\r",
+									"pm.variables.set(\"category\", categories[Math.floor(Math.random() * categories.length)]);\r",
+									"\r",
+									"// Выбор случайного производителя\r",
+									"let manufacturers = [\"Samsung\", \"Apple\", \"Sony\", \"Huawei\", \"Xiaomi\"];\r",
+									"pm.variables.set(\"manufacturer\", manufacturers[Math.floor(Math.random() * manufacturers.length)]);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"price\": {{one millon}},\r\n  \"category\": \"{{category}}\",\r\n  \"manufacturer\": \"{{manufacturer}}\",\r\n  \"imageUrl\": \"{{imageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Full update product info with non-existent ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерация случайного описания\r",
+									"pm.variables.set(\"description\", \"Description_\" + Math.random().toString(36).substring(7));\r",
+									"\r",
+									"// Выбор случайной категории\r",
+									"let categories = [\"Phones\", \"Laptops\", \"Whatches\", \"Electronics\"];\r",
+									"pm.variables.set(\"category\", categories[Math.floor(Math.random() * categories.length)]);\r",
+									"\r",
+									"// Выбор случайного производителя\r",
+									"let manufacturers = [\"Samsung\", \"Apple\", \"Sony\", \"Huawei\", \"Xiaomi\"];\r",
+									"pm.variables.set(\"manufacturer\", manufacturers[Math.floor(Math.random() * manufacturers.length)]);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"description\": \"{{description}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"category\": \"{{category}}\",\r\n  \"manufacturer\": \"{{manufacturer}}\",\r\n  \"imageUrl\": \"{{imageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/200716",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"200716"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Part update product info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"imageUrl\": \"{{$randomImageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Part update product info with incorrect data",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"imageUrl\": \"{{$randomImageUrl}}\",\r\n  \"freeShipping\": yes\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Part update product info with non-existent ID",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"{{$randomProductName}}\",\r\n  \"price\": {{$randomPrice}},\r\n  \"imageUrl\": \"{{$randomImageUrl}}\",\r\n  \"freeShipping\": {{$randomBoolean}}\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/200716",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"200716"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product search by category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/FindByCategory?category=Laptops",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"FindByCategory"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Phones",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Watches",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Laptops"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Product search by non-existent category",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/FindByCategory?category=TV",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"FindByCategory"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Laptops",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Phones",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "Watches",
+									"disabled": true
+								},
+								{
+									"key": "category",
+									"value": "TV"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product search by brand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/FindByManufacturer?manufacturer=Samsung",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"FindByManufacturer"
+							],
+							"query": [
+								{
+									"key": "manufacturer",
+									"value": "Apple",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Xiaomi",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Huawei",
+									"disabled": true
+								},
+								{
+									"key": "manufacturer",
+									"value": "Samsung"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Product search by non-existent brand",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/FindByManufacturer?manufacturer=Sony",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"FindByManufacturer"
+							],
+							"query": [
+								{
+									"key": "manufacturer",
+									"value": "Sony"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product search by free shipping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/FindByShipping?freeShipping=true",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"FindByShipping"
+							],
+							"query": [
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "freeShipping",
+									"value": "false",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product sort and filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/filter?category=Laptops&manufacturer=Samsung&freeShipping=true&minPrice=100&maxPrice=2000",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Laptops"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Samsung"
+								},
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "minPrice",
+									"value": "100"
+								},
+								{
+									"key": "maxPrice",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Product sort and filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/filter?category=Phones&manufacturer=Samsung&freeShipping=true&minPrice=100&maxPrice=2000",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Phones"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Samsung"
+								},
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "minPrice",
+									"value": "100"
+								},
+								{
+									"key": "maxPrice",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Product sort and filter",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/filter?category=Laptops&manufacturer=Sony&freeShipping=true&minPrice=100&maxPrice=2000",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "Laptops"
+								},
+								{
+									"key": "manufacturer",
+									"value": "Sony"
+								},
+								{
+									"key": "freeShipping",
+									"value": "true"
+								},
+								{
+									"key": "minPrice",
+									"value": "100"
+								},
+								{
+									"key": "maxPrice",
+									"value": "2000"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Delete a product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "Online store product testing"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "200 Register a new user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Register an existing user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/register",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Log In",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData = pm.response.json();\r",
+									"let token = responseData.token;\r",
+									"pm.environment.set(\"key\", token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{login}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Log In with invalid password",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let responseData = pm.response.json();\r",
+									"let token = responseData.token;\r",
+									"pm.environment.set(\"key\", token);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{login}}\",\r\n  \"password\": \"abc1234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Add a new user",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomChar(chars) {\r",
+									"    return chars[Math.floor(Math.random() * chars.length)];\r",
+									"}\r",
+									"\r",
+									"// Генерация имени пользователя\r",
+									"function generateUsername() {\r",
+									"    const allowedChars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_';\r",
+									"    const minLength = 3;\r",
+									"    const maxLength = 15;\r",
+									"    const length = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;\r",
+									"\r",
+									"    let username = '';\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        username += getRandomChar(allowedChars);\r",
+									"    }\r",
+									"\r",
+									"    return username;\r",
+									"}\r",
+									"\r",
+									"// Генерация пароля\r",
+									"function generatePassword() {\r",
+									"    const letters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';\r",
+									"    const digits = '0123456789';\r",
+									"    const allChars = letters + digits;\r",
+									"    const minLength = 8;\r",
+									"    const length = Math.max(minLength, Math.floor(Math.random() * 5) + 8); // от 8 до 12 символов\r",
+									"\r",
+									"    // Обязательные символы\r",
+									"    let password = getRandomChar(letters) + getRandomChar(digits);\r",
+									"\r",
+									"    // Остальные символы\r",
+									"    while (password.length < length) {\r",
+									"        password += getRandomChar(allChars);\r",
+									"    }\r",
+									"\r",
+									"    // Перемешиваем\r",
+									"    return password.split('').sort(() => 0.5 - Math.random()).join('');\r",
+									"}\r",
+									"\r",
+									"// Установка переменных окружения\r",
+									"pm.environment.set(\"randomUsername\", generateUsername());\r",
+									"pm.environment.set(\"randomPassword\", generatePassword());"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"{{randomUsername}}\",\r\n  \"password\": \"{{randomPassword}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Add a new user with invalid login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"nat_1\",\r\n  \"password\": \"nat12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Get all user ID and login",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Delete a user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/users/2582",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"2582"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "200 Add a product to the Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": {{productID}},\r\n  \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Add a product with invalid request",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": 20839,\r\n  \"quantity\": one\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Add a product with non logged in user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": 20839,\r\n  \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "500 Add a non existent product",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"productId\": 20800,\r\n  \"quantity\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Get all product from the Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Сохраняем cartItemID из JSON-ответа\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"\r",
+									"    if (jsonData.cart_item_id) {\r",
+									"        pm.environment.set(\"cartItemID\", jsonData.cart_item_id);\r",
+									"        console.log(\"Сохранено значение cartItemID:\", jsonData.cart_item_id);\r",
+									"    } else {\r",
+									"        console.warn(\"cartItemID не найден в JSON-ответе.\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/getCart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"getCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Get all product from the Cart by non logged in user",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/getCart",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"getCart"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Update product info",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"name\": \"Samsung Victum Laptop\",\r\n  \"description\": \"This is the best product\",\r\n  \"price\": 900,\r\n  \"category\": \"Laptops\",\r\n  \"manufacturer\": \"Samsung\",\r\n  \"imageUrl\": \"http://example.com/image.jpg\",\r\n  \"freeShipping\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/id/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"id",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Update product quantity",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/{{cartItemID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"{{cartItemID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Update product quantity with incorrect request",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": two\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/171119",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"171119"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Update product quantity whit non logged user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/17119",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"17119"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Update quantity with non-existent product",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/171119",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"171119"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Delete a product from the Cart",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/17121",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"17121"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Delete from the Cart with non-existent product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/17121",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"17121"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Delete from the Cart with non logged in user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": two\r\n}"
+						},
+						"url": {
+							"raw": "{{baseURL}}/cart/17121",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"cart",
+								"17121"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "200 Add an order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Сохраняем orderID из JSON-ответа\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"\r",
+									"    if (jsonData.orderId) {\r",
+									"        pm.environment.set(\"orderID\", jsonData.orderId);\r",
+									"        console.log(\"Сохранено значение orderID:\", jsonData.orderId);\r",
+									"    } else {\r",
+									"        console.warn(\"orderID не найден в JSON-ответе.\");\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Get all user orders",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user-orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"user-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Get all user orders by non logged in user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/user-orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"user-orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Update a product quantity in an order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": 3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/{{orderID}}/products/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"{{orderID}}",
+								"products",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Update a quantity in an order with negative quantity",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": -10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/{{orderID}}/products/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"{{orderID}}",
+								"products",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Update a product quantity in an order with incorrect request",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": three\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/{{orderID}}/products/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"{{orderID}}",
+								"products",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Update a quantity in an order with non-existent order",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": -10\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/533369/products/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"533369",
+								"products",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "500 Update a quantity in an order with invalid data",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"quantity\": \"много\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/orders/5369/products/{{productID}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"orders",
+								"5369",
+								"products",
+								"{{productID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Update order total",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{key}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/update-orders-total",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"update-orders-total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Update order total with non logged in user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/update-orders-total",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"update-orders-total"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Orders history",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{key}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/orders-history",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"orders-history"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "200 Update balance",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/updateBalances",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"updateBalances"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Payment by VISA card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by VISA card with low amount",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Payment by VISA card with non logged in user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "404 Payment by VISA card with empty order",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by VISA card with an expired date",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"4340511554108849\",\r\n  \"expiry_month\": 1,\r\n  \"expiry_year\": 20,\r\n  \"cvv\": \"789\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by stolen VISA card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"779330784258313\",\r\n  \"expiry_month\": 6,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by blocked VISA card",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"9181347306820824\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"234\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by VISA card with zero balance",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"7178218557247775\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"890\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by VISA card with invalid CVV",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 26,\r\n  \"cvv\": \"345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by VISA card with invalid expire date",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"card_type\": \"VISA\",\r\n  \"card_code\": \"8820354696467284\",\r\n  \"expiry_month\": 12,\r\n  \"expiry_year\": 25,\r\n  \"cvv\": \"123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "200 Payment by PayPal",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"valid@email.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by PayPal with invalid email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"invalid@@email.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "400 Payment by PayPal with blocked account",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"blocked@email.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "401 Payment by PayPal with non logged in user",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"valid@email.com\",\r\n  \"email_paypal\": \"valid@email.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/pay",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"pay"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{key}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
