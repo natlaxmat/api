@@ -16,4 +16,4 @@ I also wrote some autotests for some additional checks and rewriting the variabl
 
 _Using [WSDL](http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?WSDL) I created a collection in Postman to test this service, which allows users to get information about the target country. I also created some negative checks to test SOAP methods._
 
-[Postman SOAP collection](https://www.postman.com/descent-module-geologist-7640643/workspace/study/collection/41782591-30012ee2-c6d4-477e-a0f3-4e414d1d5896?action=share&creator=41782591&active-environment=41782591-e7abac6f-7c12-472e-839d-6824230e6bc9)
+- [Postman SOAP collection](https://www.postman.com/descent-module-geologist-7640643/workspace/study/collection/41782591-30012ee2-c6d4-477e-a0f3-4e414d1d5896?action=share&creator=41782591&active-environment=41782591-e7abac6f-7c12-472e-839d-6824230e6bc9)
