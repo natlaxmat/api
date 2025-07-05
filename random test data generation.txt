@@ -1,12 +1,13 @@
 Body request:
+
 {
-  "name": "{{$randomProductName}}",
-  "description": "{{description}}",
-  "price": {{$randomPrice}},
-  "category": "{{category}}",
-  "manufacturer": "{{manufacturer}}",
-  "imageUrl": "{{$randomImageUrl}}",
-  "freeShipping": {{$randomBoolean}}
+  "name": "{{$randomProductName}}",    // Generate a random product name
+  "description": "{{description}}",    // Generate random description
+  "price": {{$randomPrice}},           // Generate random price
+  "category": "{{category}}",          // Select a random category
+  "manufacturer": "{{manufacturer}}",  // Select random manufacturer
+  "imageUrl": "{{$randomImageUrl}}",   // Set a random image
+  "freeShipping": {{$randomBoolean}}   // Random value for freeShipping
 }
 
 Pre-request: 
