@@ -1,4 +1,4 @@
-# api
+# ⚙️ api
 ## **REST API Testing via Postman** ##
 
 _I tested all available endpoints of https://qa.demoshopping.ru/api-docs/ using Postman and created corresponding request collections. 
