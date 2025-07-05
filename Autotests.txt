@@ -1,4 +1,4 @@
-Set a variable at the collection level:
+// Set a variable at the collection level:
 
 // Get the response body
 const responseBody = pm.response.text();
@@ -17,19 +17,19 @@ if (idMatch && idMatch[1]) {
     console.warn("ID не найден в ответе");
 };
 
-Varify that status code is 200:
+// Varify that status code is 200:
 
 pm.test("Varify that status code is 200", function () {
     pm.response.to.have.status(200);
 });
 
-Verify that response time is less than 500ms:
+// Verify that response time is less than 500ms:
 
 pm.test("Verify that response time is less than 500ms", function () {
     pm.expect(pm.response.responseTime).to.be.below(500);
 });
 
-Verify that the var environment level 'productID' is set:
+// Verify that the var environment level 'productID' is set:
 
 pm.test("Verify that the var environment level 'productID' is set", function () {
     let value = pm.environment.get("productID");
@@ -37,7 +37,7 @@ pm.test("Verify that the var environment level 'productID' is set", function () 
     pm.expect(value.toString().trim().length, "Значение переменной 'productID' пустое").to.be.above(0);
 });
 
-Verify that each product has all required fields with non-empty values:
+// Verify that each product has all required fields with non-empty values:
 
 pm.test("Verify that each product has all required fields with non-empty values", function () {
     let products = pm.response.json();
@@ -71,4 +71,34 @@ pm.test("Verify that each product has all required fields with non-empty values"
             }
         });
     });
+});
+
+// Verify that the server returns an error on the string value 'price':
+
+pm.test("Verify that the server returns an error on the string value 'price'", function () {
+    const responseText = pm.response.text();
+
+    // Проверим, что статус ответа — 400 или 422 (или другой ожидаемый при ошибке валидации)
+    pm.expect(pm.response.code).to.be.oneOf([400, 422]);
+
+    // Проверим, что в сообщении есть нужный текст
+    pm.expect(responseText.toLowerCase()).to.include("неправильный тип значения");
+    pm.expect(responseText.toLowerCase()).to.include("price");
+});
+
+// Verify that the server doesn't return the product by non-existent ID:
+
+pm.test("Verify that the server doesn't return the product by non-existent ID", function () {
+    const status = pm.response.code;
+    const body = pm.response.text();
+
+    // Ожидаем статус ошибки 404 или 204
+    pm.expect(status).to.be.oneOf([404, 204]);
+
+    // Убеждаемся, что ответ не содержит данные товара
+    pm.expect(body).to.not.include("name");
+    pm.expect(body).to.not.include("description");
+
+    // Дополнительно — ожидаем конкретное сообщение об ошибке
+    pm.expect(body.toLowerCase()).to.include("не найден");
 });
