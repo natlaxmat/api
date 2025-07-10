@@ -4,7 +4,7 @@
 _I tested all available endpoints of https://qa.demoshopping.ru/api-docs/ using Postman and created corresponding request collections. 
 I also wrote some autotests for some additional checks and rewriting the variables for the existing collection and added random test data generation._
 
-- [Postman REST collection](https://https://www.postman.com/descent-module-geologist-7640643/my-workspace/collection/vmkx2x2/demoshopping?action=share&creator=41782591&active-environment=41782591-a7813f4f-8115-43d1-83b6-da65f23e9828)
+- [Postman REST collection](https://www.postman.com/descent-module-geologist-7640643/my-workspace/collection/vmkx2x2/demoshopping?action=share&creator=41782591&active-environment=41782591-a7813f4f-8115-43d1-83b6-da65f23e9828)
 
 - [Autotests (scripts) for the Postman REST collection](https://drive.google.com/file/d/1DxKhdlRGroVOsl2uDOoXjh9NCpQcOCCJ/view?usp=sharing)
 
